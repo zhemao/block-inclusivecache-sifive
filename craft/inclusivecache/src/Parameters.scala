@@ -156,7 +156,8 @@ case class InclusiveCacheParameters(
 
   // Provision enough resources to achieve full throughput with missing single-beat accesses
   val mshrs = InclusiveCacheParameters.all_mshrs(cache, micro)
-  val secondary = max(mshrs, micro.memCycles - mshrs)
+  val blockBeats = cache.blockBytes / inner.manager.beatBytes
+  val secondary = max(mshrs * (blockBeats - 1), micro.memCycles - mshrs)
   val putLists = micro.memCycles // allow every request to be single beat
   val putBeats = max(2*cache.blockBeats, micro.memCycles)
   val relLists = 2
